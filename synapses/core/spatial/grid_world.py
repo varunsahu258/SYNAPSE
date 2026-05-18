@@ -7,7 +7,7 @@ optimized for predictable, O(1) coordinate and occupancy operations.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, Iterator, List, Set, Tuple
+from typing import Dict, Iterable, Iterator, List, Set
 
 
 CellCoord = tuple[int, int]

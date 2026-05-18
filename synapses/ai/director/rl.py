@@ -153,11 +153,11 @@ def run_baseline_rollout(env: DirectorGymEnv, *, policy: str, steps: int) -> dic
     return _aggregate(records)
 
 
-def train_director_ppo(output_dir: str | Path, *, total_timesteps: int = 20000, episode_length: int = 100, seed: int = 42) -> Path:
+def train_director_ppo(output_dir: str | Path, *, total_timesteps: int = 20000, episode_length: int = 100, seed: int = 42, reward_weights: RewardWeights | None = None) -> Path:
     from stable_baselines3 import PPO
     from stable_baselines3.common.callbacks import CheckpointCallback
     run_dir=Path(output_dir); run_dir.mkdir(parents=True, exist_ok=True)
-    env=DirectorGymEnv(episode_length=episode_length, seed=seed)
+    env=DirectorGymEnv(episode_length=episode_length, seed=seed, reward_weights=reward_weights)
     model=PPO("MlpPolicy", env, verbose=0, tensorboard_log=str(run_dir/"tensorboard"), seed=seed)
     model.learn(total_timesteps=total_timesteps, callback=CheckpointCallback(save_freq=max(1000, episode_length), save_path=str(run_dir/"checkpoints"), name_prefix="director_ppo"))
     path=run_dir/"director_ppo_final.zip"; model.save(str(path)); return path

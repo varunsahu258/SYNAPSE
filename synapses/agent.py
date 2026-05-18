@@ -22,9 +22,9 @@ class Agent:
         position: Current grid-cell position used by spatial simulations.
     """
 
-    wealth: int = 50
-    health: int = 50
-    satisfaction: int = 50
+    wealth: float = 50.0
+    health: float = 50.0
+    satisfaction: float = 50.0
     position: tuple[int, int] = (0, 0)
 
     def act(self, environment_state: Mapping[str, Any] | None) -> dict[str, str]:
@@ -39,9 +39,9 @@ class Agent:
             Action dictionary with an ``action`` name and short ``reason``.
         """
         state = environment_state or {}
-        risk = _as_int(state.get("risk", 0))
-        opportunity = _as_int(state.get("opportunity", 0))
-        social = _as_int(state.get("social", 0))
+        risk = _as_float(state.get("risk", 0))
+        opportunity = _as_float(state.get("opportunity", 0))
+        social = _as_float(state.get("social", 0))
 
         if self.health < 40 or risk >= 70:
             return {"action": "rest", "reason": "protect_health"}
@@ -55,16 +55,16 @@ class Agent:
         return {"action": "maintain", "reason": "balanced_state"}
 
 
-def _as_int(value: Any) -> int:
-    """Convert simple numeric environment values to integers.
+def _as_float(value: Any) -> float:
+    """Convert simple numeric environment values to floats.
 
     Non-numeric values are treated as zero to keep decisions deterministic and
     avoid coupling the agent to external validation components.
     """
     if isinstance(value, bool):
-        return int(value)
+        return float(value)
 
     if isinstance(value, (int, float)):
-        return int(value)
+        return float(value)
 
-    return 0
+    return 0.0

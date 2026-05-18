@@ -6,8 +6,10 @@ services:
       context: ../..
       dockerfile: deploy/docker/Dockerfile.api
     environment:
-      SYNAPSES_DATABASE_URL: ${SYNAPSES_DATABASE_URL:-postgresql+psycopg://synapses:synapses@db:5432/synapses}
+      SYNAPSES_DATABASE_URL: ${SYNAPSES_DATABASE_URL:-postgresql+psycopg://synapses:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/synapses}
       SYNAPSES_LOG_LEVEL: ${SYNAPSES_LOG_LEVEL:-INFO}
+      SYNAPSES_API_KEYS: ${SYNAPSES_API_KEYS:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
     ports:
       - "8000:8000"
     depends_on:
@@ -29,8 +31,10 @@ services:
       dockerfile: deploy/docker/Dockerfile.api
     command: ["python", "-m", "synapses.workflow"]
     environment:
-      SYNAPSES_DATABASE_URL: ${SYNAPSES_DATABASE_URL:-postgresql+psycopg://synapses:synapses@db:5432/synapses}
+      SYNAPSES_DATABASE_URL: ${SYNAPSES_DATABASE_URL:-postgresql+psycopg://synapses:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/synapses}
       SYNAPSES_LOG_LEVEL: ${SYNAPSES_LOG_LEVEL:-INFO}
+      SYNAPSES_API_KEYS: ${SYNAPSES_API_KEYS:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
@@ -40,7 +44,7 @@ services:
     environment:
       POSTGRES_DB: synapses
       POSTGRES_USER: synapses
-      POSTGRES_PASSWORD: synapses
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U synapses -d synapses"]
       interval: 10s
@@ -63,6 +67,11 @@ services:
     image: grafana/grafana:11.2.0
     ports:
       - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
+    volumes:
+      - ../observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
 

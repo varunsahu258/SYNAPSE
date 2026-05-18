@@ -13,7 +13,7 @@ import random
 from typing import Any, Callable, Iterable, Mapping
 
 from synapses.agent import Agent
-from synapses.director import DirectorAI, Intervention
+from synapses.director import DirectorAI
 from synapses.environment import Environment
 from synapses.integration import IntegratedSimulation
 

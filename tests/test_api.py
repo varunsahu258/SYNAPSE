@@ -27,6 +27,28 @@ class RunSimulationEndpointTests(unittest.TestCase):
     def setUp(self) -> None:
         self.client = TestClient(app)
 
+
+    def test_health_endpoint_reports_ok(self) -> None:
+        response = self.client.get("/health")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"status": "ok"})
+
+    def test_metrics_endpoint_exports_prometheus_text(self) -> None:
+        response = self.client.get("/metrics")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/plain", response.headers["content-type"])
+
+    def test_llm_mode_uses_server_side_openrouter_key(self) -> None:
+        response = self.client.post(
+            "/run_simulation",
+            json={"num_agents": 1, "steps": 1, "director_mode": "llm", "openrouter_api_key": "client-secret"},
+        )
+
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("OPENROUTER_API_KEY", response.json()["detail"])
+
     def test_run_simulation_returns_metrics_over_time(self) -> None:
         response = self.client.post(
             "/run_simulation",
@@ -111,7 +133,7 @@ class RunSimulationEndpointTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers["access-control-allow-origin"], "*")
+        self.assertEqual(response.headers["access-control-allow-origin"], "http://localhost:5173")
         self.assertIn("POST", response.headers["access-control-allow-methods"])
 
     def test_invalid_request_is_rejected(self) -> None:

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapses"
+version = "0.1.0"
+description = "Socio-economic simulation API and control plane"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.100,<1",
+  "uvicorn[standard]>=0.29,<1",
+  "httpx>=0.27,<1",
+]
+
+[tool.setuptools.packages.find]
+include = ["synapses*"]
+
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+select = ["F"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+follow_imports = "skip"
+check_untyped_defs = false
+disable_error_code = ["import-untyped"]
