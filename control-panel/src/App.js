@@ -14,7 +14,6 @@ const DEFAULT_FORM = {
   satisfactionThreshold: 40,
   crimeThreshold: 50,
   directorMode: 'rule_based',
-  openrouterApiKey: '',
 };
 
 const SLIDER_FIELDS = [
@@ -123,11 +122,6 @@ function App() {
     event.preventDefault();
     setIsRunning(true);
     setUiError('');
-    if (form.directorMode === 'llm' && !form.openrouterApiKey.trim()) {
-      setUiError('OpenRouter API key is required for LLM Director mode.');
-      setIsRunning(false);
-      return;
-    }
     setProgress(10);
     setStatus(`Running experiment for ${form.numAgents} agents over ${form.steps} steps...`);
 
@@ -279,14 +273,7 @@ function App() {
               {form.directorMode === 'llm' && (
                 <div className="grid gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
                   <p className="text-xs font-black text-amber-800">Using NVIDIA Nemotron via OpenRouter</p>
-                  <p className="text-xs font-semibold text-amber-700">LLM mode may respond more slowly due to API latency.</p>
-                  <input
-                    className="rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm"
-                    placeholder="OpenRouter API key"
-                    type="password"
-                    value={form.openrouterApiKey}
-                    onChange={(event) => updateField('openrouterApiKey', event.target.value)}
-                  />
+                  <p className="text-xs font-semibold text-amber-700">LLM mode uses the server-side OpenRouter key configured by the API operator.</p>
                 </div>
               )}
 

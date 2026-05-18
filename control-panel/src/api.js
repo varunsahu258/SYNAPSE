@@ -17,7 +17,6 @@ function simulationPayload({
   satisfactionThreshold,
   crimeThreshold,
   directorMode,
-  openrouterApiKey,
 }) {
   return {
     num_agents: numAgents,
@@ -27,7 +26,6 @@ function simulationPayload({
     satisfaction_threshold: satisfactionThreshold,
     crime_threshold: crimeThreshold,
     director_mode: directorMode,
-    openrouter_api_key: openrouterApiKey,
   };
 }
 

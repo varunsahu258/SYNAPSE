@@ -10,9 +10,11 @@ class LLMDirector:
         self,
         api_key: str,
         model: str = "nvidia/nemotron-3-super-120b-a12b:free",
+        site_url: str | None = None,
     ):
         self._api_key = api_key
         self._model = model
+        self._site_url = site_url
         self._endpoint = "https://openrouter.ai/api/v1/chat/completions"
 
     def recommend(self, global_metrics: dict | None) -> list[dict]:
@@ -27,9 +29,10 @@ class LLMDirector:
         headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:3000",
             "X-Title": "SYNAPSES Control Panel",
         }
+        if self._site_url:
+            headers["HTTP-Referer"] = self._site_url
 
         try:
             import requests

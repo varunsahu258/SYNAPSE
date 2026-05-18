@@ -17,9 +17,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest
+          pip install -e .
+          pip install pytest pytest-cov ruff mypy
+      - name: Lint python
+        run: ruff check synapses tests
+      - name: Type check python
+        run: mypy synapses/agent.py synapses/ai/director/llm_director.py
       - name: Run python tests
-        run: pytest -q
+        run: pytest --cov=synapses --cov-fail-under=60 -q
 
   frontend:
     runs-on: ubuntu-latest
@@ -32,6 +37,5 @@ jobs:
         with:
           node-version: "20"
       - run: npm install
-      - run: npm ci
       - run: npm test -- --watch=false
       - run: npm run build
